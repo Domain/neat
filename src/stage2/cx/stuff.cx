@@ -274,7 +274,7 @@ class FuncPtrCall : Expression
 
         this.loc.assert2s4(
             type.args.length == this.args.length,
-            "expected ", ltoa(type.args.length), " args, not ", ltoa(this.args.length));
+            "expected ", cxruntime_ltoa(type.args.length), " args, not ", cxruntime_ltoa(this.args.length));
 
         int[] regs = new int[](this.args.length);
         for (int i = 0; i < this.args.length; i += 1)

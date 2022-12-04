@@ -100,10 +100,16 @@ void main(string[] args)
     auto llFile = ".obj/" ~ removeSlashes(output) ~ ".ll";
     cxruntime_file_write(llFile, backendModule.output.text());
     // int pid = getpid();
-    // cxruntime_system("cat /proc/" ~ itoa(pid) ~ "/status");
-    string flags = "-rdynamic ";
+    // cxruntime_system("cat /proc/" ~ cxruntime_itoa(pid) ~ "/status");
+    string flags = "";
+    string link = "";
+    if (cxruntime_os() != "Windows") 
+    {
+       flags = "-rdynamic "; 
+       link = " -ldl ";
+    }
     if (optimize) flags = flags ~ "-Ofast ";
-    string cmd = "clang -v -D __" ~ cxruntime_os() ~ "__ -D OS=" ~ cxruntime_os() ~ " " ~ flags ~ llFile ~ " src/stage2/runtime.c -o " ~ output;
+    string cmd = "clang -v -D__" ~ cxruntime_os() ~ "__ -DOS=" ~ cxruntime_os() ~ " " ~ flags ~ llFile ~ " src/stage2/runtime.c -o " ~ output ~ link;
     print("$ " ~ cmd);
     cxruntime_system(cmd);
 }

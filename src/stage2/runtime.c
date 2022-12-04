@@ -41,21 +41,21 @@ int cxruntime_atoi(struct String str) {
     char *temp = toStringz(str);
     int res = atoi(temp);
     free(temp);
-    // printf("atoi(%.*s) = %i\n", str.length, str.ptr, res);
+    // printf("cxruntime_atoi(%.*s) = %i\n", str.length, str.ptr, res);
     return res;
 }
 struct String cxruntime_itoa(int i) {
     int len = snprintf(NULL, 0, "%i", i);
     char *res = malloc(len + 1);
     snprintf(res, len + 1, "%i", i);
-    // printf("itoa(%i) = '%.*s'\n", i, len, res);
+    // printf("cxruntime_itoa(%i) = '%.*s'\n", i, len, res);
     return (struct String) { len, res };
 }
 struct String cxruntime_ltoa(long long l) {
     int len = snprintf(NULL, 0, "%lld", l);
     char *res = malloc(len + 1);
     snprintf(res, len + 1, "%lld", l);
-    // printf("ltoa(%lld) = '%.*s'\n", l, len, res);
+    // printf("cxruntime_ltoa(%lld) = '%.*s'\n", l, len, res);
     return (struct String) { len, res };
 }
 int cxruntime_linenr(struct String haystack, struct String needle, int* linep, int* columnp) {
@@ -129,8 +129,9 @@ void cxruntime_system(struct String command) {
 }
 
 struct String cxruntime_os() {
-#define OSNAME #OS
-    char * os = "Windows";
+#define OSNAME2(O) #O
+#define OSNAME(O)  OSNAME2(O)
+    char * os = OSNAME(OS);
     long length = strlen(os);
     return (struct String) { length, os };
 }

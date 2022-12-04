@@ -28,7 +28,7 @@ bool parseNumber(Parser parser, int* ip)
         parser.drop(1);
     }
     parser.commit();
-    int i = atoi(number);
+    int i = cxruntime_atoi(number);
     if (negative) i = 0 - i; // TODO move to "-a" form instead of parsing negative numbers here
     *ip = i;
     return true;

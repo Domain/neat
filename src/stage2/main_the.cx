@@ -91,7 +91,7 @@ void main(string[] args)
     auto llFile = ".obj/" ~ removeSlashes(output) ~ ".ll";
     cxruntime_file_write(llFile, backendModule.output.text());
     // int pid = getpid();
-    // cxruntime_system("cat /proc/" ~ itoa(pid) ~ "/status");
+    // cxruntime_system("cat /proc/" ~ cxruntime_itoa(pid) ~ "/status");
     string cmd = "clang -rdynamic " ~ llFile ~ " src/stage2/runtime.c -o " ~ output ~ " -ldl";
     print("$ " ~ cmd);
     cxruntime_system(cmd);

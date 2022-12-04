@@ -346,7 +346,7 @@ class Call : Expression
     {
         loc.assert2s5(
             fun.args.length == args.length,
-            fun.name, " expected ", ltoa(fun.args.length), " args, not ", ltoa(args.length));
+            fun.name, " expected ", cxruntime_ltoa(fun.args.length), " args, not ", cxruntime_ltoa(args.length));
 
         for (int i = 0; i < args.length; i += 1)
         {

@@ -8,7 +8,7 @@ int ack(int m, int n) {
 }
 
 int main(int argc, char **argv) {
-    int m = atoi(argv[1]), n = atoi(argv[2]);
+    int m = cxruntime_atoi(argv[1]), n = cxruntime_atoi(argv[2]);
     for (int i = 0; i < 10; i++) {
         printf("ack(%i, %i) = %i\n", m, n, ack(m, n));
     }
