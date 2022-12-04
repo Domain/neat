@@ -1,9 +1,15 @@
-#include <dlfcn.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __Windows__
+#include <windows.h>
+#include <io.h>
+#else
+#include <dlfcn.h>
 #include <unistd.h>
+#endif
 
 struct String
 {
@@ -81,7 +87,11 @@ int cxruntime_isDigit(char ch) {
 }
 int cxruntime_file_exists(struct String file) {
     char *fn = toStringz(file);
+#ifdef __Windows__
+    int ret = _access(fn, 0) != -1;
+#else
     int ret = access(fn, F_OK) != -1;
+#endif
     free(fn);
     return ret;
 }
@@ -118,13 +128,29 @@ void cxruntime_system(struct String command) {
     free(cmd);
 }
 
+struct String cxruntime_os() {
+#define OSNAME #OS
+    char * os = "Windows";
+    long length = strlen(os);
+    return (struct String) { length, os };
+}
+
 void cxruntime_dlcall(struct String dlfile, struct String fun, void* arg) {
+#ifdef __Windows__
+    HINSTANCE handle = LoadLibraryA(toStringz(dlfile));
+    if (!handle) fprintf(stderr, "can't open %.*s\n", (int) dlfile.length, dlfile.ptr);
+    assert(!!handle);
+    FARPROC sym = GetProcAddress(handle, toStringz(fun));
+    if (!sym) fprintf(stderr, "can't load symbol '%.*s'\n", (int) fun.length, fun.ptr);
+    assert(!!sym);
+#else
     void *handle = dlopen(toStringz(dlfile), RTLD_LAZY);
     if (!handle) fprintf(stderr, "can't open %.*s - %s\n", (int) dlfile.length, dlfile.ptr, dlerror());
     assert(!!handle);
     void *sym = dlsym(handle, toStringz(fun));
     if (!sym) fprintf(stderr, "can't load symbol '%.*s'\n", (int) fun.length, fun.ptr);
     assert(!!sym);
+#endif
 
     ((void(*)(void*)) sym)(arg);
 }

@@ -65,7 +65,14 @@ void main(string[] args)
     }
     if (!output.length) output = removeExtension(args[0]);
 
-    cxruntime_system("mkdir -p .obj");
+    if (cxruntime_os() == "Windows")
+    {
+        cxruntime_system("if not exist \".obj\\\" (mkdir .obj) else (echo .obj exists)");
+    }
+    else
+    {
+        cxruntime_system("mkdir -p .obj");
+    }
 
     auto builtins = new Module("", new MacroState, null);
     // auto backend = new ProxyBackend();
@@ -96,7 +103,7 @@ void main(string[] args)
     // cxruntime_system("cat /proc/" ~ itoa(pid) ~ "/status");
     string flags = "-rdynamic ";
     if (optimize) flags = flags ~ "-Ofast ";
-    string cmd = "clang " ~ flags ~ llFile ~ " src/stage2/runtime.c -o " ~ output ~ " -ldl";
+    string cmd = "clang -v -D __" ~ cxruntime_os() ~ "__ -D OS=" ~ cxruntime_os() ~ " " ~ flags ~ llFile ~ " src/stage2/runtime.c -o " ~ output;
     print("$ " ~ cmd);
     cxruntime_system(cmd);
 }

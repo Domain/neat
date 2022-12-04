@@ -1,0 +1,29 @@
+{
+	"authors": [
+		"Domain"
+	],
+	"copyright": "Copyright © 2022, Domain",
+	"dependencies": {
+		"stage1:stage1": "*",
+		"dshould": "~>1.7.0"
+	},
+	"description": "bootstrap compiler",
+	"license": "BSD-3",
+	"name": "stage1",
+	"targetPath": "build",
+	"sourcePaths": ["src/stage1"],
+	"sourceFiles": ["src/stage1_libs.d"],
+	"subPackages": [
+		{
+			"name": "stage1",
+			"targetType": "library",
+			"targetPath": "build",
+			"sourceFiles": [ "src/stage1_libs.d" ],
+			"sourcePaths": [],
+			"dependencies": {
+				"dshould": "~>1.7.0",
+				"boilerplate": "~>1.8.1"
+			}
+		}
+	]
+}

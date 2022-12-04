@@ -21,6 +21,7 @@ class Global {
 
 extern(C) void cxruntime_file_write(string file, string content);
 extern(C) void cxruntime_system(string command);
+extern(C) string cxruntime_os();
 extern(C) void cxruntime_dlcall(string soname, string name, void* arg);
 
 class LLVMBackendModule : BackendModule {

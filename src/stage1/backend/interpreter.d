@@ -694,15 +694,34 @@ private void defineIntrinsics(IpBackendModule mod)
         auto ret = wait(pid);
         assert(ret == 0);
     });
+    defineCallback("cxruntime_os", delegate string() {
+        auto os = "Unknown";
+        version(Windows) os = "Windows";
+        version(linux)   os = "Linux";
+        version(OSX)     os = "MacOS";
+        version(Android) os = "Android";
+        version(iOS)     os = "iOS";
+        return os;
+    });
     defineCallback("cxruntime_dlcall", delegate void(string dlfile, string fun, void* arg) {
-        import core.sys.posix.dlfcn : dlopen, dlsym, RTLD_LAZY;
         import std.string : toStringz;
 
-        auto handle = dlopen(toStringz(dlfile), RTLD_LAZY);
-        assert(handle);
-        auto sym = dlsym(handle, toStringz(fun));
-        assert(sym);
+        version(Windows) {
+            import core.sys.windows.windows : LoadLibraryA, GetProcAddress;
+            
+            auto handle = LoadLibraryA(toStringz(dlfile));
+            assert(handle);
+            auto sym = GetProcAddress(handle, toStringz(fun));
+        }
+        else {
+            import core.sys.posix.dlfcn : dlopen, dlsym, RTLD_LAZY;
 
+            auto handle = dlopen(toStringz(dlfile), RTLD_LAZY);
+            assert(handle);
+            auto sym = dlsym(handle, toStringz(fun));
+        }
+
+        assert(sym);
         (cast(ExternCMacroFun) sym)(arg);
     });
 
